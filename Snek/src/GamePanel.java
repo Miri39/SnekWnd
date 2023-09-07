@@ -22,7 +22,7 @@ public class GamePanel extends JPanel implements ActionListener {
     int applesEaten;
     int appleXCoordinate;
     int appleYCoordinate;
-    int direction = Direction.Right.ordinal();
+    Direction direction = Direction.Right;
     boolean running = false;
     Timer timer;
     Random random;
@@ -50,6 +50,17 @@ public class GamePanel extends JPanel implements ActionListener {
     public void draw(Graphics graphics){
         graphics.setColor(Color.red);
         graphics.fillOval(appleXCoordinate, appleYCoordinate, UNIT_SIZE, UNIT_SIZE);
+
+        for(int i = 0; i < bodyParts; i++){
+            if(i == 0) {
+                graphics.setColor(Color.green);
+                graphics.fillRect(XBODYPARTS[i], YBODYPARTS[i], UNIT_SIZE, UNIT_SIZE);
+            }
+            else {
+                graphics.setColor(new Color(45,180,0));
+                graphics.fillRect(XBODYPARTS[i], YBODYPARTS[i], UNIT_SIZE, UNIT_SIZE);
+            }
+        }
     }
 
     public void newApple(){
@@ -58,7 +69,16 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void move(){
-
+        for(int i = bodyParts; i > 0; i--) {
+            XBODYPARTS[i] = XBODYPARTS[i-1];
+            YBODYPARTS[i] = YBODYPARTS[i-1];
+        }
+        switch (direction) {
+            case Up -> YBODYPARTS[0] -= UNIT_SIZE;
+            case Down -> YBODYPARTS[0] += UNIT_SIZE;
+            case Left -> XBODYPARTS[0] -= UNIT_SIZE;
+            case Right -> XBODYPARTS[0] += UNIT_SIZE;
+        }
     }
 
     public void checkApple(){
@@ -75,7 +95,12 @@ public class GamePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if(running){
+            move();
+            checkApple();
+            checkCollisions();
+        }
+        repaint();
     }
 
     public class MyKeyAdapter extends KeyAdapter{
