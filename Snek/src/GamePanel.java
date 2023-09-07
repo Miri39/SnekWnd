@@ -48,11 +48,13 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void draw(Graphics graphics){
-
+        graphics.setColor(Color.red);
+        graphics.fillOval(appleXCoordinate, appleYCoordinate, UNIT_SIZE, UNIT_SIZE);
     }
 
     public void newApple(){
-
+        appleXCoordinate = random.nextInt((int)(DIMENSION.width/UNIT_SIZE))*UNIT_SIZE;
+        appleYCoordinate = random.nextInt((int)(DIMENSION.height/UNIT_SIZE))*UNIT_SIZE;
     }
 
     public void move(){
