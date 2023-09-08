@@ -47,19 +47,23 @@ public class GamePanel extends JPanel implements ActionListener {
         draw(graphics);
     }
 
-    public void draw(Graphics graphics){
-        graphics.setColor(Color.red);
-        graphics.fillOval(appleXCoordinate, appleYCoordinate, UNIT_SIZE, UNIT_SIZE);
+    public void draw(Graphics graphics) {
+        if (running) {
+            graphics.setColor(Color.red);
+            graphics.fillOval(appleXCoordinate, appleYCoordinate, UNIT_SIZE, UNIT_SIZE);
 
-        for(int i = 0; i < bodyParts; i++){
-            if(i == 0) {
-                graphics.setColor(Color.green);
-                graphics.fillRect(XBODYPARTS[i], YBODYPARTS[i], UNIT_SIZE, UNIT_SIZE);
+            for (int i = 0; i < bodyParts; i++) {
+                if (i == 0) {
+                    graphics.setColor(Color.green);
+                    graphics.fillRect(XBODYPARTS[i], YBODYPARTS[i], UNIT_SIZE, UNIT_SIZE);
+                } else {
+                    graphics.setColor(new Color(45, 180, 0));
+                    graphics.fillRect(XBODYPARTS[i], YBODYPARTS[i], UNIT_SIZE, UNIT_SIZE);
+                }
             }
-            else {
-                graphics.setColor(new Color(45,180,0));
-                graphics.fillRect(XBODYPARTS[i], YBODYPARTS[i], UNIT_SIZE, UNIT_SIZE);
-            }
+        }
+        else{
+            gameOver(graphics);
         }
     }
 
@@ -82,15 +86,33 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void checkApple(){
-
+        if((XBODYPARTS[0] == appleXCoordinate) && YBODYPARTS[0] == appleYCoordinate){
+            bodyParts++;
+            applesEaten++;
+            newApple();
+        }
     }
 
     public void checkCollisions(){
-
+        for(int i = bodyParts; i > 0; i--){
+            if((XBODYPARTS[0] == XBODYPARTS[i]) && (YBODYPARTS[0]) == YBODYPARTS[i]){
+                running = false;
+            }
+        }
+        if((XBODYPARTS[0] < 0 || XBODYPARTS[0] > DIMENSION.width) ||
+           (YBODYPARTS[0] < 0 || YBODYPARTS[0] > DIMENSION.height)){
+            running = false;
+        }
+        if(!running){
+            timer.stop();
+        }
     }
 
     public void gameOver(Graphics graphics){
-
+        graphics.setColor(Color.red);
+        graphics.setFont(new Font("Ink Free", Font.BOLD, 75));
+        FontMetrics metrics = getFontMetrics(graphics.getFont());
+        graphics.drawString("Game Over", (DIMENSION.width - metrics.stringWidth("Game Over"))/2, DIMENSION.height/2);
     }
 
     @Override
@@ -106,7 +128,28 @@ public class GamePanel extends JPanel implements ActionListener {
     public class MyKeyAdapter extends KeyAdapter{
         @Override
         public void keyPressed(KeyEvent event){
-
+            switch (event.getExtendedKeyCode()) {
+                case KeyEvent.VK_LEFT -> {
+                    if (direction != Direction.Right) {
+                        direction = Direction.Left;
+                    }
+                }
+                case KeyEvent.VK_RIGHT -> {
+                    if (direction != Direction.Left) {
+                        direction = Direction.Right;
+                    }
+                }
+                case KeyEvent.VK_UP -> {
+                    if (direction != Direction.Down) {
+                        direction = Direction.Up;
+                    }
+                }
+                case KeyEvent.VK_DOWN -> {
+                    if (direction != Direction.Up) {
+                        direction = Direction.Down;
+                    }
+                }
+            }
         }
     }
 }
