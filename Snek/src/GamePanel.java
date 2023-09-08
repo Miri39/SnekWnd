@@ -6,12 +6,13 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class GamePanel extends JPanel implements ActionListener {
 
     enum Direction{
         Left, Up, Right, Down
-    };
+    }
 
     static final Dimension DIMENSION = new Dimension(600,600);
     static final int UNIT_SIZE = 25;
@@ -45,10 +46,15 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void paintComponent(Graphics graphics){
         super.paintComponent(graphics);
-        draw(graphics);
+        try {
+            draw(graphics);
+        } catch (InterruptedException e) {
+            System.out.println("Interrupted while sleeping");
+            gameOver(graphics);
+        }
     }
 
-    public void draw(Graphics graphics) {
+    public void draw(Graphics graphics) throws InterruptedException {
         if (running) {
             graphics.setColor(Color.red);
             graphics.fillOval(appleXCoordinate, appleYCoordinate, UNIT_SIZE, UNIT_SIZE);
@@ -64,21 +70,19 @@ public class GamePanel extends JPanel implements ActionListener {
             }
             graphics.setColor(Color.red);
             graphics.setFont(new Font("Ink Free", Font.PLAIN, 30));
-            FontMetrics metrics = getFontMetrics(graphics.getFont());
             graphics.drawString("Score " + applesEaten, graphics.getFont().getSize(), graphics.getFont().getSize());
 
         }
         else{
-//            TimeUnit.SECONDS.sleep(2);
+            TimeUnit.SECONDS.sleep(2); // try using repaint
             gameOver(graphics);
         }
     }
 
     public void newApple(){
-        //bug apple appears into snake
         do {
-            appleXCoordinate = random.nextInt((int) (DIMENSION.width / UNIT_SIZE)) * UNIT_SIZE;
-            appleYCoordinate = random.nextInt((int) (DIMENSION.height / UNIT_SIZE)) * UNIT_SIZE;
+            appleXCoordinate = random.nextInt((DIMENSION.width / UNIT_SIZE)) * UNIT_SIZE;
+            appleYCoordinate = random.nextInt((DIMENSION.height / UNIT_SIZE)) * UNIT_SIZE;
         }while ((Arrays.stream(xBodyParts).anyMatch(x -> x == appleXCoordinate)) &&
                 (Arrays.stream(yBodyParts).anyMatch(y -> y == appleYCoordinate)));
     }
@@ -164,7 +168,7 @@ public class GamePanel extends JPanel implements ActionListener {
                         direction = Direction.Down;
                     }
                 }
-                case KeyEvent.VK_Q -> { bodyParts+= 15; }
+                case KeyEvent.VK_Q -> bodyParts+= 15;
             }
         }
     }
