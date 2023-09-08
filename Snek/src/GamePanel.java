@@ -4,8 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 public class GamePanel extends JPanel implements ActionListener {
 
@@ -15,10 +15,10 @@ public class GamePanel extends JPanel implements ActionListener {
 
     static final Dimension DIMENSION = new Dimension(600,600);
     static final int UNIT_SIZE = 25;
-    static final int GAME_UNITS = (DIMENSION.height+DIMENSION.width)/UNIT_SIZE;
+    static final int GAME_UNITS = (DIMENSION.height * DIMENSION.width)/UNIT_SIZE;
     static final int DELAY = 75;
-    final int XBODYPARTS[] = new int[GAME_UNITS];
-    final int YBODYPARTS[] = new int[GAME_UNITS];
+    int[] xBodyParts = new int[GAME_UNITS];
+    int[] yBodyParts = new int[GAME_UNITS];
     int bodyParts = 6;
     int applesEaten;
     int appleXCoordinate;
@@ -56,10 +56,10 @@ public class GamePanel extends JPanel implements ActionListener {
             for (int i = 0; i < bodyParts; i++) {
                 if (i == 0) {
                     graphics.setColor(Color.green);
-                    graphics.fillRect(XBODYPARTS[i], YBODYPARTS[i], UNIT_SIZE, UNIT_SIZE);
+                    graphics.fillRect(xBodyParts[i], yBodyParts[i], UNIT_SIZE, UNIT_SIZE);
                 } else {
                     graphics.setColor(new Color(45, 180, 0));
-                    graphics.fillRect(XBODYPARTS[i], YBODYPARTS[i], UNIT_SIZE, UNIT_SIZE);
+                    graphics.fillRect(xBodyParts[i], yBodyParts[i], UNIT_SIZE, UNIT_SIZE);
                 }
             }
             graphics.setColor(Color.red);
@@ -76,25 +76,28 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void newApple(){
         //bug apple appears into snake
-        appleXCoordinate = random.nextInt((int)(DIMENSION.width/UNIT_SIZE))*UNIT_SIZE;
-        appleYCoordinate = random.nextInt((int)(DIMENSION.height/UNIT_SIZE))*UNIT_SIZE;
+        do {
+            appleXCoordinate = random.nextInt((int) (DIMENSION.width / UNIT_SIZE)) * UNIT_SIZE;
+            appleYCoordinate = random.nextInt((int) (DIMENSION.height / UNIT_SIZE)) * UNIT_SIZE;
+        }while ((Arrays.stream(xBodyParts).anyMatch(x -> x == appleXCoordinate)) &&
+                (Arrays.stream(yBodyParts).anyMatch(y -> y == appleYCoordinate)));
     }
 
     public void move(){
         for(int i = bodyParts; i > 0; i--) {
-            XBODYPARTS[i] = XBODYPARTS[i-1];
-            YBODYPARTS[i] = YBODYPARTS[i-1];
+            xBodyParts[i] = xBodyParts[i-1];
+            yBodyParts[i] = yBodyParts[i-1];
         }
         switch (direction) {
-            case Up -> YBODYPARTS[0] -= UNIT_SIZE;
-            case Down -> YBODYPARTS[0] += UNIT_SIZE;
-            case Left -> XBODYPARTS[0] -= UNIT_SIZE;
-            case Right -> XBODYPARTS[0] += UNIT_SIZE;
+            case Up -> yBodyParts[0] -= UNIT_SIZE;
+            case Down -> yBodyParts[0] += UNIT_SIZE;
+            case Left -> xBodyParts[0] -= UNIT_SIZE;
+            case Right -> xBodyParts[0] += UNIT_SIZE;
         }
     }
 
     public void checkApple(){
-        if((XBODYPARTS[0] == appleXCoordinate) && YBODYPARTS[0] == appleYCoordinate){
+        if((xBodyParts[0] == appleXCoordinate) && yBodyParts[0] == appleYCoordinate){
             bodyParts++;
             applesEaten++;
             newApple();
@@ -103,12 +106,13 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void checkCollisions(){
         for(int i = bodyParts; i > 0; i--){
-            if((XBODYPARTS[0] == XBODYPARTS[i]) && (YBODYPARTS[0]) == YBODYPARTS[i]){
+            if ((xBodyParts[0] == xBodyParts[i]) && (yBodyParts[0]) == yBodyParts[i]) {
                 running = false;
+                break;
             }
         }
-        if((XBODYPARTS[0] < 0 || XBODYPARTS[0] > DIMENSION.width) ||
-           (YBODYPARTS[0] < 0 || YBODYPARTS[0] > DIMENSION.height)){
+        if((xBodyParts[0] < 0 || xBodyParts[0] > DIMENSION.width) ||
+           (yBodyParts[0] < 0 || yBodyParts[0] > DIMENSION.height)){
             running = false;
         }
         if(!running){
@@ -160,6 +164,7 @@ public class GamePanel extends JPanel implements ActionListener {
                         direction = Direction.Down;
                     }
                 }
+                case KeyEvent.VK_Q -> { bodyParts+= 15; }
             }
         }
     }
