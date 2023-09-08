@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class GamePanel extends JPanel implements ActionListener {
 
@@ -61,13 +62,20 @@ public class GamePanel extends JPanel implements ActionListener {
                     graphics.fillRect(XBODYPARTS[i], YBODYPARTS[i], UNIT_SIZE, UNIT_SIZE);
                 }
             }
+            graphics.setColor(Color.red);
+            graphics.setFont(new Font("Ink Free", Font.PLAIN, 30));
+            FontMetrics metrics = getFontMetrics(graphics.getFont());
+            graphics.drawString("Score " + applesEaten, graphics.getFont().getSize(), graphics.getFont().getSize());
+
         }
         else{
+//            TimeUnit.SECONDS.sleep(2);
             gameOver(graphics);
         }
     }
 
     public void newApple(){
+        //bug apple appears into snake
         appleXCoordinate = random.nextInt((int)(DIMENSION.width/UNIT_SIZE))*UNIT_SIZE;
         appleYCoordinate = random.nextInt((int)(DIMENSION.height/UNIT_SIZE))*UNIT_SIZE;
     }
@@ -111,8 +119,11 @@ public class GamePanel extends JPanel implements ActionListener {
     public void gameOver(Graphics graphics){
         graphics.setColor(Color.red);
         graphics.setFont(new Font("Ink Free", Font.BOLD, 75));
-        FontMetrics metrics = getFontMetrics(graphics.getFont());
-        graphics.drawString("Game Over", (DIMENSION.width - metrics.stringWidth("Game Over"))/2, DIMENSION.height/2);
+        FontMetrics metrics1 = getFontMetrics(graphics.getFont());
+        graphics.drawString("Game Over", (DIMENSION.width - metrics1.stringWidth("Game Over"))/2, DIMENSION.height/2);
+        graphics.setFont(new Font("Ink Free", Font.PLAIN, 30));
+        FontMetrics metrics2 = getFontMetrics(graphics.getFont());
+        graphics.drawString("Score " + applesEaten, (DIMENSION.width - metrics2.stringWidth("Score " + applesEaten))/2, graphics.getFont().getSize());
     }
 
     @Override
