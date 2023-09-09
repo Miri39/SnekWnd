@@ -29,11 +29,13 @@ public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     Random random;
     public GamePanel(){
+        System.out.println("Panel");
         random = new Random();
         this.setPreferredSize(DIMENSION);
         this.setBackground(Color.lightGray);
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
+        this.requestFocusInWindow();
         startGame();
     }
 
@@ -149,21 +151,25 @@ public class GamePanel extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent event){
             switch (event.getExtendedKeyCode()) {
                 case KeyEvent.VK_LEFT -> {
+                    System.out.println("Left");
                     if (direction != Direction.Right) {
                         direction = Direction.Left;
                     }
                 }
                 case KeyEvent.VK_RIGHT -> {
+                    System.out.println("Right");
                     if (direction != Direction.Left) {
                         direction = Direction.Right;
                     }
                 }
                 case KeyEvent.VK_UP -> {
+                    System.out.println("Up");
                     if (direction != Direction.Down) {
                         direction = Direction.Up;
                     }
                 }
                 case KeyEvent.VK_DOWN -> {
+                    System.out.println("Down");
                     if (direction != Direction.Up) {
                         direction = Direction.Down;
                     }
