@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 public class MainMenuPanel extends JPanel implements ActionListener {
     static final Dimension DIMENSION = new Dimension(600,600);
     private final JButton button1;
-    private JButton button2;
+    private final JButton button2;
     private JButton button3;
     private JButton button4;
 
@@ -36,6 +36,9 @@ public class MainMenuPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if(e.getSource() == button1){
             SnekGame.gameFrame.MainMenuStartGame();
+        }
+        if(e.getSource() == button2){
+            SnekGame.gameFrame.MainMenuStartGameInfiniteMode();
         }
     }
 }

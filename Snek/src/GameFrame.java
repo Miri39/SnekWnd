@@ -33,6 +33,13 @@ public class GameFrame extends JFrame {
         c.add("GamePanel", gamePanel);
         panels.next(c);
         gamePanel.requestFocusInWindow();
-        System.out.println("Pula");
+    }
+
+    public void MainMenuStartGameInfiniteMode() {
+        GamePanel gamePanel = new GamePanel();
+        c.add("GamePanel", gamePanel);
+        panels.next(c);
+        gamePanel.infiniteMode = true;
+        gamePanel.requestFocusInWindow();
     }
 }

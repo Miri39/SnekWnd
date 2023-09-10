@@ -26,6 +26,8 @@ public class GamePanel extends JPanel implements ActionListener {
     int appleYCoordinate;
     Direction direction = Direction.Right;
     boolean running = false;
+
+    boolean infiniteMode = false;
     Timer timer;
     Random random;
     public GamePanel(){
@@ -126,6 +128,27 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    public void checkCollisionsInfiniteMode(){
+        for(int i = bodyParts; i > 0; i--){
+            if ((xBodyParts[0] == xBodyParts[i]) && (yBodyParts[0]) == yBodyParts[i]) {
+                bodyParts -= (bodyParts - i);
+                break;
+            }
+        }
+        if(xBodyParts[0] < 0){
+            xBodyParts[0] = DIMENSION.width;
+        }
+        if(xBodyParts[0] > DIMENSION.width){
+            xBodyParts[0] = 0;
+        }
+        if (yBodyParts[0] < 0){
+            yBodyParts[0] = DIMENSION.height;
+        }
+        if(yBodyParts[0] > DIMENSION.height){
+            yBodyParts[0] = 0;
+        }
+    }
+
     public void gameOver(Graphics graphics){
         graphics.setColor(Color.red);
         graphics.setFont(new Font("Ink Free", Font.BOLD, 75));
@@ -141,7 +164,11 @@ public class GamePanel extends JPanel implements ActionListener {
         if(running){
             move();
             checkApple();
-            checkCollisions();
+            if (infiniteMode) {
+                checkCollisionsInfiniteMode();
+            } else {
+                checkCollisions();
+            }
         }
         repaint();
     }
